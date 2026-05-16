@@ -1,0 +1,136 @@
+const sequelize = require("./helpers/database.js");
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+
+//Importacion de Winston
+const errorHandler = require("./middlewares/errorHandler.js");
+const requestLogger = require("./middlewares/requestLogger.js");
+
+//Importacion de el cors
+require("dotenv").config();
+
+//importacion de los modelos
+const Docentes = require("./models/docentes.js");
+const Asignaturas = require("./models/asignaturas.js");
+const Estudiantes = require("./models/estudiantes.js");
+const Cuartos = require("./models/cuartos.js");
+const Torres = require("./models/torres.js");
+const Pisos = require("./models/pisos.js");
+const Becas = require("./models/becas.js");
+const carreras = require("./models/carreras.js");
+const Trabajador = require("./models/trabajadores.js");
+// Importacion de las rutas
+const becaRoutes = require("./routes/becaRoutes.js");
+const asignaturaRoutes = require("./routes/asignaturasRouters.js");
+const pisoRoutes = require("./routes/pisoRoutes.js");
+const torreRoutes = require("./routes/torreRoutes.js");
+const cuartoRoutes = require("./routes/cuartoRoutes.js");
+const estudianteRoutes = require("./routes/estudianteRoutes.js");
+const trabajadorRoutes = require("./routes/trabajadorRoutes.js");
+const authRoutes = require("./routes/authRoutes.js");
+const facultadRoutes = require("./routes/facultadRoutes.js");
+const incidenciasRoutes = require("./routes/incidenciasRoutes.js");
+const carreraRoutes = require("./routes/carreraRoutes.js");
+
+
+//Swagger definitions
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Beca API",
+      description: "API backend for Beca project",
+      version: "1.0.0",
+      contact: {
+        name: "Elena Cardenas Cruz",
+        email: "cardenaselena247@gmail.com",
+        url: "",
+      },
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ["./routes/*.js", "./models/*.js"],
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Definición de corsOptions
+
+// Uso de Cors
+const allowsOrigins = [
+
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "*",
+];
+app.use(
+  cors({
+    origin: allowsOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
+
+//Middleware de la aplicacion
+
+app.use(requestLogger);
+//uso de las rutas
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use("/", becaRoutes);
+app.use("/", carreraRoutes);
+app.use("/", asignaturaRoutes);
+app.use("/", pisoRoutes);
+app.use("/", torreRoutes);
+app.use("/", cuartoRoutes);
+app.use("/", estudianteRoutes);
+app.use("/", trabajadorRoutes);
+app.use("/", authRoutes);
+app.use("/", facultadRoutes);
+app.use("/", incidenciasRoutes);
+
+app.use(errorHandler);
+
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+
+
+
+app.listen(process.env.PORT, () => {
+  console.log(`Servidor iniciado en el puerto ${process.env.PORT}`);
+  console.log(`http://localhost:${process.env.PORT}`);
+  console.log(
+    `Documentacion de swagger: http://localhost:${process.env.PORT}/api-docs`
+  );
+});
+
+// Sincronizar los modelos para verificar la conexión con la base de datos
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Todos los modelos se sincronizaron correctamente.");
+  })
+  .catch((err) => {
+    console.log("Ha ocurrido un error al sincronizar los modelos: ", err);
+  });

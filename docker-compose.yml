@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ok
+      POSTGRES_DB: residencia_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: node_backend
+    restart: always
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    # Esta línea limpia semillas viejas, inserta las nuevas y arranca el servidor
+    command: sh -c "npx sequelize-cli db:seed:undo:all && npx sequelize-cli db:seed:all && node app.js"
+
+volumes:
+  postgres_data:
