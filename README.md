@@ -82,3 +82,6 @@ Este proyecto corresponde al backend del sistema de gestión de residencia unive
    ```
 
 El servidor estará disponible en `http://localhost:3000`
+=======
+# Pract-Lab_2025-2026_ApiUniss
+Sistema para el API de la UNISS
