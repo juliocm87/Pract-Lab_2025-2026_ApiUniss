@@ -267,7 +267,7 @@ const createTrabajador = async (datosCompletos) => {
       docenteCreado = await Docente.create({
         trabajadorId: ci,
         facultadId: docente.facultadId,
-        nombre_usuario: docente.nombre_usuario,
+        cargo: docente.cargo,
       });
     }
 
@@ -441,7 +441,7 @@ const updateTrabajador = async (ci, datosActualizacion) => {
         where: { trabajadorId: ci },
         defaults: {
           facultadId: docente.facultadId,
-          nombre_usuario: docente.nombre_usuario,
+          cargo: docente.cargo,
         },
       });
     } else {

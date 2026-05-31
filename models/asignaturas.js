@@ -1,5 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
+const Profesores = require("./docentes")
+const Carreras = require("./carreras")
+const AsignaturaCarreras = require("./asignaturaCarreras")
 
 /**
  * @swagger
@@ -61,6 +64,21 @@ const Asignaturas = sequelize.define(
     }
 );
 
+Asignaturas.belongsToMany(Profesores, {
+    through: 'profesores_asignaturas',
+    foreignKey: 'asignaturaId',
+    otherKey: 'profesorId',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
 
+Asignaturas.belongsToMany(Carreras, {
+    through: AsignaturaCarreras,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+
+Asignaturas.hasMany(AsignaturaCarreras);
+AsignaturaCarreras.belongsTo(Asignaturas)
 
 module.exports = Asignaturas;

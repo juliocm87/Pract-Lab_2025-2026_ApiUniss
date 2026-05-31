@@ -56,7 +56,7 @@ const Docentes = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false
     },
-    nombre_usuario: {
+    cargo: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true

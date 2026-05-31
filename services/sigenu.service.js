@@ -109,7 +109,7 @@ class SigenuService {
     try {
       const auth = Buffer.from(`${this.auth.username}:${this.auth.password}`).toString('base64');
       
-      const response = await fetch(`${this.baseURL}/faculties/${facultyId}`, {
+      const response = await fetch(`${this.baseURL}/dss/getfaculty/${facultyId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Basic ${auth}`,
