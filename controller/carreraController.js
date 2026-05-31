@@ -1,8 +1,9 @@
 const AppError = require("../error/AppError");
+const Asignaturas = require("../models/asignaturas");
 const Carrera = require("../models/carreras");
 const Docente = require("../models/docentes");
 const { Op } = require("sequelize");
-
+const sigenu = require("../services/sigenu.service")
 
 const getCarrera = async (offset = 0, limit = 10, searchTerm = '') => {
     try {
@@ -14,6 +15,13 @@ const getCarrera = async (offset = 0, limit = 10, searchTerm = '') => {
             required: false,
             as: 'guia'
         },
+        {
+            model: Asignaturas,
+            attributes: ["nombre_asignatura"],
+            through: {
+                attributes: ["id", "horas_clase", "anno_academico"]
+            }
+        }
     ];
 
     // Si hay un término de búsqueda, agregar condiciones de búsqueda
@@ -64,9 +72,23 @@ const getAllCarreras = async () => {
     }
 };
 
-const createCarrera = async (nombre_carrera) => {
+const createCarrera = async (datos) => {
     try {
-        const carrera = await Carrera.create({ nombre_carrera});
+        const {
+            nombre_carrera,
+            facultad
+        } = datos
+        if (facultad){
+            try{
+                await sigenu.getFacultyData(facultad)
+            }catch(error){
+                throw new AppError("Hubo un problema al buscar la facultad "+ error.message, 500)
+            }
+        }
+        const carrera = await Carrera.create({ 
+            nombre_carrera,
+            facultad
+        });
         return carrera;
     } catch (error) {
         throw error;

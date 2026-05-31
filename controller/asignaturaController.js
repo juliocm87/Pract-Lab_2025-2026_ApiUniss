@@ -7,6 +7,7 @@ const Cuarto = require("../models/cuartos");
 const Piso = require("../models/pisos");
 const Estudiantes = require("../models/estudiantes");
 const { Op, where } = require("sequelize");
+const sigenu = require("../services/sigenu.service")
 
 const getAsignaturasPorSemestre = async (limit = 10, offset = 0, facultadId, semestre) => {
   const whereClause = {};
@@ -76,9 +77,25 @@ const getAllAsignaturas = async () => {
   }
 };
 
-const createAsignatura = async (nombre_asignatura) => {
+const createAsignatura = async (datos) => {
   try {
-    const asignatura = await Asignatura.create({ nombre_asignatura});
+    const {
+      nombre_asignatura,
+      facultad,
+      semestre
+    } = datos
+    if (facultad){
+      try{
+        await sigenu.getFacultyData(facultad)
+      }catch(error){
+        throw new AppError("Hubo un problema al buscar la facultad "+ error.message, 500)
+      }
+    }
+    const asignatura = await Asignatura.create({ 
+      nombre_asignatura,
+      facultad,
+      semestre
+    });
     return asignatura;
   } catch (error) {
     throw error;

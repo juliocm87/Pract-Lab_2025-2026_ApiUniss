@@ -220,14 +220,14 @@ router.post(
     authenticate(["administrador","secretaria_beca", "jefe_beca"]),
     async (req, res, next) => {
         try {
-            const { nombre_asignatura} = req.body;
-            if (!nombre_asignatura ) {
+            const datos = req.body;
+            if (!datos.nombre_asignatura ) {
                 throw new AppError("Todos los campos son requeridos", 400);
             }
-            const asignatura = await createAsignatura(nombre_asignatura);
+            const asignatura = await createAsignatura(datos);
             res.status(201).json(asignatura);
         } catch (error) {
-            if (error?.parent?.detail.includes("nombre_asignatura")) {
+            if (error?.parent?.detail.includes("datos.nombre_asignatura")) {
                 return next(new AppError("Ya existe la asignatura", 400));
             }
             next(error); //Error de servidor 500

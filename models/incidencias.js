@@ -57,7 +57,7 @@ const Estudiantes = require("./estudiantes");
 const Incidencias = sequelize.define(
   "incidencias",
   {
-   
+  
     tipo: {
       type: DataTypes.STRING,
       allowNull: false,

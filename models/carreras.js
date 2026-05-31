@@ -5,8 +5,11 @@ facultad
 //relacion 1-1 con docente
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const docente = require("./docentes");
 const Docentes = require("./docentes");
+const Asignaturas = require("./asignaturas")
+const AsignaturaCarreras = require("./asignaturaCarreras")
+
+
 /**
  * @swagger
  * components:
@@ -82,5 +85,14 @@ Carreras.belongsTo(Docentes, {
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
 });
+
+Carreras.belongsToMany(Asignaturas, {
+    through: AsignaturaCarreras,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+});
+
+Carreras.hasMany(AsignaturaCarreras);
+AsignaturaCarreras.belongsTo(Carreras)
 
 module.exports = Carreras;

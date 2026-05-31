@@ -15,6 +15,9 @@ require("dotenv").config();
 
 //importacion de los modelos
 const Docentes = require("./models/docentes.js");
+const Incidencia = require("./models/incidencias.js")
+const Plan = require("./models/planes.js")
+const AsignaturaCarrera = require("./models/asignaturaCarreras.js")
 const Asignaturas = require("./models/asignaturas.js");
 const Estudiantes = require("./models/estudiantes.js");
 const Cuartos = require("./models/cuartos.js");
@@ -23,9 +26,12 @@ const Pisos = require("./models/pisos.js");
 const Becas = require("./models/becas.js");
 const carreras = require("./models/carreras.js");
 const Trabajador = require("./models/trabajadores.js");
+
 // Importacion de las rutas
 const becaRoutes = require("./routes/becaRoutes.js");
+const asignaturaCarreraRoutes = require("./routes/asignaturaCarreraRoutes.js")
 const asignaturaRoutes = require("./routes/asignaturasRouters.js");
+const planRoutes = require("./routes/planRoutes.js")
 const pisoRoutes = require("./routes/pisoRoutes.js");
 const torreRoutes = require("./routes/torreRoutes.js");
 const cuartoRoutes = require("./routes/cuartoRoutes.js");
@@ -99,6 +105,8 @@ app.use(requestLogger);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/", becaRoutes);
+app.use("/", asignaturaCarreraRoutes)
+app.use("/", planRoutes);
 app.use("/", carreraRoutes);
 app.use("/", asignaturaRoutes);
 app.use("/", pisoRoutes);
