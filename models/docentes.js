@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Trabajadores = require("./trabajadores");
 
 
 /**
@@ -67,20 +66,5 @@ const Docentes = sequelize.define(
     paranoid: true,
   }
 );
-
-// Relación con Trabajadores (Uno a Uno)
-Docentes.belongsTo(Trabajadores, {
-  foreignKey: "trabajadorId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Trabajadores.hasOne(Docentes, {
-  foreignKey: "trabajadorId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-
 
 module.exports = Docentes; 

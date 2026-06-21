@@ -1,9 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Estudiantes = require("./estudiantes");
-const Piso = require("./pisos");
-const Torres = require("./torres");
-const Becas = require("./becas");
+
 /**
  * @swagger
  * components:
@@ -89,18 +86,5 @@ const Cuartos = sequelize.define(
     }
   }
 );
-
-
-Cuartos.hasMany(Estudiantes, {
-  foreignKey: "cuartoId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Estudiantes.belongsTo(Cuartos, {
-  foreignKey: "cuartoId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
 
 module.exports = Cuartos;

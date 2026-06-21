@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Estudiantes = require("./estudiantes");
 
 /**
  * @swagger
@@ -86,14 +85,5 @@ const Incidencias = sequelize.define(
     paranoid: true,
   }
 );
-
-// Relación muchos a muchos con Estudiantes
-Incidencias.belongsToMany(Estudiantes, {
-  through: 'estudiante_incidencias',
-  foreignKey: 'incidenciaId',
-  otherKey: 'estudianteId',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE'
-});
 
 module.exports = Incidencias;

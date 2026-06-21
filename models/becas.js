@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
 
-const Torres = require("./torres");
-
 /**
  * @swagger
  * components:
@@ -55,16 +53,5 @@ const Becas = sequelize.define(
     paranoid: true,
   }
 );
-
-Becas.hasMany(Torres, {
-  foreignKey: "becaId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-Torres.belongsTo(Becas, {
-  foreignKey: "becaId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
 
 module.exports = Becas;

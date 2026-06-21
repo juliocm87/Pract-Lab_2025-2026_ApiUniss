@@ -22,8 +22,6 @@ services:
       - .env
     depends_on:
       - db
-    # Esta línea limpia semillas viejas, inserta las nuevas y arranca el servidor
-    command: sh -c "npx sequelize-cli db:seed:undo:all && npx sequelize-cli db:seed:all && node app.js"
 
 volumes:
   postgres_data:
