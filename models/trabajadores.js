@@ -1,8 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Becas = require("./becas");
-const Cuartos = require("./cuartos");
-const Pisos = require("./pisos");
 
 // Función para determinar el sexo basado en el CI
 const determinarSexo = (ci) => {
@@ -127,65 +124,5 @@ const Trabajadores = sequelize.define(
     }
   }
 );
-
-// Relación con Becas (Muchos a Uno) - Trabajador pertenece a una Beca
-Trabajadores.belongsTo(Becas, {
-  foreignKey: "becaId",
-  as: "beca",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Becas.hasMany(Trabajadores, {
-  foreignKey: "becaId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-// Relación con Becas (Uno a Uno) - Beca tiene un Trabajador como jefe
-Trabajadores.hasOne(Becas, {
-  foreignKey: "trabajadorId",
-  as: "becaJefe",
-  onDelete: "SET NULL",
-  onUpdate: "CASCADE",
-});
-
-Becas.belongsTo(Trabajadores, {
-  foreignKey: "trabajadorId",
-  as: "becaJefe",
-
-  onDelete: "SET NULL",
-  onUpdate: "CASCADE",
-});
-
-// Relación con Cuartos (Muchos a Uno)
-Trabajadores.belongsTo(Cuartos, {
-  foreignKey: "cuartoId",
-  onDelete: "SET NULL",
-  onUpdate: "CASCADE",
-});
-
-Cuartos.hasMany(Trabajadores, {
-  foreignKey: "cuartoId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Trabajadores.hasOne(Pisos, {
-  foreignKey: "trabajadorId",
-  as: "trabajadorSupervisor",
-  onDelete: "SET NULL",
-  onUpdate: "CASCADE",
-});
-
-// Relación con Pisos (Uno a Uno) - Trabajador supervisa un piso
-Pisos.belongsTo(Trabajadores, {
-  foreignKey: "trabajadorId",
-  as: "trabajadorSupervisor",
-  onDelete: "SET NULL",
-  onUpdate: "CASCADE",
-});
-
-
 
 module.exports = Trabajadores;

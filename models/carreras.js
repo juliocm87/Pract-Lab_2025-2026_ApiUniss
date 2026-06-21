@@ -1,13 +1,5 @@
-/*
-nombre carrera
-facultad
-*/
-//relacion 1-1 con docente
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Docentes = require("./docentes");
-const Asignaturas = require("./asignaturas")
-const AsignaturaCarreras = require("./asignaturaCarreras")
 
 
 /**
@@ -56,7 +48,7 @@ const Carreras = sequelize.define(
         unique: true,
     },
     docenteId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
         unique: true,
     },
@@ -70,29 +62,5 @@ const Carreras = sequelize.define(
         paranoid: true,
     }
 );
-
-// Relación con Docentes (Uno a Uno) - Carrera tiene un Docente como guia
-Docentes.hasOne(Carreras, {
-    foreignKey: "docenteId",
-    as: "guia",
-    onDelete: "SET NULL",
-    onUpdate: "CASCADE",
-});
-
-Carreras.belongsTo(Docentes, {
-    foreignKey: "docenteId",
-    as: "guia",
-    onDelete: "SET NULL",
-    onUpdate: "CASCADE",
-});
-
-Carreras.belongsToMany(Asignaturas, {
-    through: AsignaturaCarreras,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-});
-
-Carreras.hasMany(AsignaturaCarreras);
-AsignaturaCarreras.belongsTo(Carreras)
 
 module.exports = Carreras;

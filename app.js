@@ -14,33 +14,41 @@ const requestLogger = require("./middlewares/requestLogger.js");
 require("dotenv").config();
 
 //importacion de los modelos
-const Docentes = require("./models/docentes.js");
-const Incidencia = require("./models/incidencias.js")
-const Plan = require("./models/planes.js")
-const AsignaturaCarrera = require("./models/asignaturaCarreras.js")
-const Asignaturas = require("./models/asignaturas.js");
-const Estudiantes = require("./models/estudiantes.js");
-const Cuartos = require("./models/cuartos.js");
-const Torres = require("./models/torres.js");
-const Pisos = require("./models/pisos.js");
-const Becas = require("./models/becas.js");
-const carreras = require("./models/carreras.js");
-const Trabajador = require("./models/trabajadores.js");
+const {
+  AsignaturaCarrera,
+  Asignaturas,
+  Becas,
+  carreras,
+  Cuartos,
+  Cursos,
+  Docentes,
+  Estudiantes,
+  Horarios,
+  Incidencia,
+  Pisos,
+  Plan,
+  Torres,
+  Trabajador,
+  Turnos} = require("./models/asociaciones.js");
 
 // Importacion de las rutas
-const becaRoutes = require("./routes/becaRoutes.js");
-const asignaturaCarreraRoutes = require("./routes/asignaturaCarreraRoutes.js")
+const asignaturaCarreraRoutes = require("./routes/asignaturaCarreraRoutes.js");
 const asignaturaRoutes = require("./routes/asignaturasRouters.js");
-const planRoutes = require("./routes/planRoutes.js")
-const pisoRoutes = require("./routes/pisoRoutes.js");
-const torreRoutes = require("./routes/torreRoutes.js");
-const cuartoRoutes = require("./routes/cuartoRoutes.js");
-const estudianteRoutes = require("./routes/estudianteRoutes.js");
-const trabajadorRoutes = require("./routes/trabajadorRoutes.js");
 const authRoutes = require("./routes/authRoutes.js");
-const facultadRoutes = require("./routes/facultadRoutes.js");
-const incidenciasRoutes = require("./routes/incidenciasRoutes.js");
+const becaRoutes = require("./routes/becaRoutes.js");
 const carreraRoutes = require("./routes/carreraRoutes.js");
+const cuartoRoutes = require("./routes/cuartoRoutes.js");
+const cursoRoutes = require("./routes/cursoRoutes.js");
+const docenteRoutes = require("./routes/docenteRoutes.js");
+const estudianteRoutes = require("./routes/estudianteRoutes.js");
+const facultadRoutes = require("./routes/facultadRoutes.js");
+const horarioRoutes = require("./routes/horarioRoutes.js");
+const incidenciasRoutes = require("./routes/incidenciasRoutes.js");
+const pisoRoutes = require("./routes/pisoRoutes.js");
+const planRoutes = require("./routes/planRoutes.js");
+const torreRoutes = require("./routes/torreRoutes.js");
+const trabajadorRoutes = require("./routes/trabajadorRoutes.js");
+const turnoRoutes = require("./routes/turnoRoutes.js");
 
 
 //Swagger definitions
@@ -104,19 +112,24 @@ app.use(requestLogger);
 //uso de las rutas
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use("/", becaRoutes);
-app.use("/", asignaturaCarreraRoutes)
-app.use("/", planRoutes);
-app.use("/", carreraRoutes);
+
+app.use("/", asignaturaCarreraRoutes);
 app.use("/", asignaturaRoutes);
-app.use("/", pisoRoutes);
-app.use("/", torreRoutes);
-app.use("/", cuartoRoutes);
-app.use("/", estudianteRoutes);
-app.use("/", trabajadorRoutes);
 app.use("/", authRoutes);
+app.use("/", becaRoutes);
+app.use("/", carreraRoutes);
+app.use("/", cuartoRoutes);
+app.use("/", cursoRoutes);
+app.use("/", docenteRoutes);
+app.use("/", estudianteRoutes);
 app.use("/", facultadRoutes);
+app.use("/", horarioRoutes);
 app.use("/", incidenciasRoutes);
+app.use("/", pisoRoutes);
+app.use("/", planRoutes);
+app.use("/", torreRoutes);
+app.use("/", trabajadorRoutes);
+app.use("/", turnoRoutes);
 
 app.use(errorHandler);
 

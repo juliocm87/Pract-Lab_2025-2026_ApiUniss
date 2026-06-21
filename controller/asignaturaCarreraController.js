@@ -47,8 +47,6 @@ const updateAsignaturaCarrera = async (id, datos) =>{
         const actualizada = await existe.update(
             {
                 horas_clase: datos.horas,
-                hora_inicio: datos.hora_inicio,
-                horario_fin: datos.horario_fin,
                 idAsignatura: datos.idAsignatura, 
                 idCarrera: datos.idCarrera, 
                 anno_academico: datos.anno_academico
@@ -68,8 +66,6 @@ const createAsignaturaCarrera = async (datos) =>{
         }
         const asignaturaCarrea = await AsignaturaCarrera.create({
             horas_clase: datos.horas,
-            hora_inicio: datos.hora_inicio,
-            horario_fin: datos.horario_fin,
             carreraId: datos.idCarrera,
             asignaturaId: datos.idAsignatura,
             anno_academico: datos.anno_academico

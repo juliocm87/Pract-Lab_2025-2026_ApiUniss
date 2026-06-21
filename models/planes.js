@@ -1,7 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Docentes = require("./docentes");
-const AsignaturaCarrera = require("./asignaturaCarreras");
 /**
  * @swagger
  * components:
@@ -51,8 +49,5 @@ const Planes = sequelize.define(
         paranoid: true,
     }
 );
-
-Planes.hasMany(AsignaturaCarrera);
-AsignaturaCarrera.belongsTo(Planes);
 
 module.exports = Planes;

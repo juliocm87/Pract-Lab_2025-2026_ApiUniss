@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
 
-const Cuartos = require("./cuartos");
-const Trabajadores = require("./trabajadores");
 
 /**
  * @swagger
@@ -72,19 +70,5 @@ const Pisos = sequelize.define(
     }
   }
 );
-
-// Relación con Cuartos (Uno a Muchos)
-Pisos.hasMany(Cuartos, {
-  foreignKey: "pisoId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-Cuartos.belongsTo(Pisos, {
-  foreignKey: "pisoId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-
 
 module.exports = Pisos;

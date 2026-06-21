@@ -79,8 +79,4 @@ const Estudiantes = sequelize.define(
   }
 );
 
-
-
-
-
 module.exports = Estudiantes;

@@ -9,19 +9,17 @@ const AsignaturaCarrera = sequelize.define(
             primaryKey: true,
             autoIncrement: true
         },
+        planId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: "planes",
+                key: "id"
+            },
+        },
         horas_clase: {
             type: DataTypes.INTEGER,
             allowNull: false
-        },
-        hora_inicio: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        horario_fin: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            unique: true,
         },
         anno_academico: {
             type: DataTypes.INTEGER,

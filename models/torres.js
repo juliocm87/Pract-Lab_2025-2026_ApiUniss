@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/database");
-const Pisos = require("./pisos");
 
 /**
  * @swagger
@@ -58,16 +57,5 @@ const Torres = sequelize.define(
     }
   }
 );
-
-Torres.hasMany(Pisos, {
-  foreignKey: "torreId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-Pisos.belongsTo(Torres, {
-  foreignKey: "torreId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
 
 module.exports = Torres;
