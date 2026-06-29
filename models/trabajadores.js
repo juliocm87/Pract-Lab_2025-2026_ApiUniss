@@ -97,8 +97,12 @@ const Trabajadores = sequelize.define(
       unique: true,
     },
     rol: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.ENUM('administrador', 'decano', 'secretaria_beca', 'secretaria_facultad', 'jefe_beca', 'docente', ),
+        allowNull: false,
+        defaultValue: 'docente',
+        validate: {
+            isIn: [['administrador', 'decano', 'secretaria_beca', 'secretaria_facultad', 'jefe_beca', 'docente']]
+        }
     },
     becaId: {
       type: DataTypes.INTEGER,
