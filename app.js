@@ -14,40 +14,32 @@ const requestLogger = require("./middlewares/requestLogger.js");
 require("dotenv").config();
 
 //importacion de los modelos
-const {
-  AsignaturaCarrera,
-  Asignaturas,
-  Becas,
-  carreras,
-  Cuartos,
-  Cursos,
-  Docentes,
-  Estudiantes,
-  Horarios,
-  Incidencia,
-  Pisos,
-  Plan,
-  Torres,
-  Trabajador,
-  Turnos} = require("./models/asociaciones.js");
+const modelos = require("./models/asociaciones.js");
 
 // Importacion de las rutas
+const actividadRoutes = require("./routes/actividadRoutes.js");
 const asignaturaCarreraRoutes = require("./routes/asignaturaCarreraRoutes.js");
 const asignaturaRoutes = require("./routes/asignaturasRouters.js");
 const authRoutes = require("./routes/authRoutes.js");
 const becaRoutes = require("./routes/becaRoutes.js");
+const cargaDocenteActividadRoutes = require("./routes/cargaDocenteActividadRoutes.js");
+const cargaDocenteRoutes = require("./routes/cargaDocenteRoutes.js");
 const carreraRoutes = require("./routes/carreraRoutes.js");
+const comentarioRoutes = require("./routes/comentarioRutes.js");
 const cuartoRoutes = require("./routes/cuartoRoutes.js");
 const cursoRoutes = require("./routes/cursoRoutes.js");
 const docenteRoutes = require("./routes/docenteRoutes.js");
 const estudianteRoutes = require("./routes/estudianteRoutes.js");
+const evaluacionRoutes = require("./routes/evaluacionRoutes.js");
 const facultadRoutes = require("./routes/facultadRoutes.js");
 const horarioRoutes = require("./routes/horarioRoutes.js");
 const incidenciasRoutes = require("./routes/incidenciasRoutes.js");
 const pisoRoutes = require("./routes/pisoRoutes.js");
 const planRoutes = require("./routes/planRoutes.js");
+const tesisRoutes = require("./routes/tesisRoutes.js");
 const torreRoutes = require("./routes/torreRoutes.js");
 const trabajadorRoutes = require("./routes/trabajadorRoutes.js");
+const tribunalRoutes = require("./routes/tribunalRoutes.js");
 const turnoRoutes = require("./routes/turnoRoutes.js");
 
 
@@ -112,23 +104,29 @@ app.use(requestLogger);
 //uso de las rutas
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-
+app.use("/", actividadRoutes);
 app.use("/", asignaturaCarreraRoutes);
 app.use("/", asignaturaRoutes);
 app.use("/", authRoutes);
 app.use("/", becaRoutes);
+app.use("/", cargaDocenteActividadRoutes);
+app.use("/", cargaDocenteRoutes);
 app.use("/", carreraRoutes);
+app.use("/", comentarioRoutes);
 app.use("/", cuartoRoutes);
 app.use("/", cursoRoutes);
 app.use("/", docenteRoutes);
 app.use("/", estudianteRoutes);
+app.use("/", evaluacionRoutes);
 app.use("/", facultadRoutes);
 app.use("/", horarioRoutes);
 app.use("/", incidenciasRoutes);
 app.use("/", pisoRoutes);
 app.use("/", planRoutes);
+app.use("/", tesisRoutes);
 app.use("/", torreRoutes);
 app.use("/", trabajadorRoutes);
+app.use("/", tribunalRoutes);
 app.use("/", turnoRoutes);
 
 app.use(errorHandler);

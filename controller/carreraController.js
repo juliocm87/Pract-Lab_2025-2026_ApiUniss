@@ -97,7 +97,7 @@ const createCarrera = async (datos) => {
 
 const updateCarrera = async (id, nombre_carrera) => {
     try {
-        const carrera = await Beca.update(
+        const carrera = await Carrera.update(
             { nombre_carrera},
             { where: { id } }
         );
