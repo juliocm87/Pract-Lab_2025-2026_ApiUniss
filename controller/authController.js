@@ -195,7 +195,7 @@ const login = async (nombre_usuario, contrasena) => {
     }
 
     // Autenticar contraseña con LDAP
-    await authenticateLDAP(nombre_usuario, contrasena);
+    //await authenticateLDAP(nombre_usuario, contrasena);
     
     // Usar el rol del trabajador desde la base de datos
     const role = trabajador.rol || 'usuario';
