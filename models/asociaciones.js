@@ -323,6 +323,12 @@ Tribunales.belongsToMany(Docentes, {
     onUpdate: 'CASCADE'
 })
 
+Tribunales.belongsTo(Docentes, { foreignKey: 'jefe', targetKey: 'trabajadorId', as: 'jefeDocente' });
+Tribunales.belongsTo(Docentes, { foreignKey: 'secretario', targetKey: 'trabajadorId', as: 'secretarioDocente' });
+Tribunales.belongsTo(Docentes, { foreignKey: 'vocal', targetKey: 'trabajadorId', as: 'vocalDocente' });
+Tribunales.belongsTo(Docentes, { foreignKey: 'tutor', targetKey: 'trabajadorId', as: 'tutorDocente' });
+Tribunales.belongsTo(Docentes, { foreignKey: 'oponente', targetKey: 'trabajadorId', as: 'oponenteDocente' });
+
 //Relación tribunal trabajador (1-N)
 Trabajadores.hasMany(Tribunales, {
     onDelete: "SET NULL",
@@ -346,25 +352,40 @@ Tesis.belongsToMany(Tribunales, {
 //Relaciones comentarios
 //docente(1-N)
 Docentes.hasMany(Comentarios, {
+    foreignKey: 'docenteId',
+    sourceKey: 'trabajadorId',
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
 })
 
 Comentarios.belongsTo(Docentes, {
+    foreignKey: 'docenteId',
+    targetKey: 'trabajadorId',
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
 })
 
 //evaluacion(1-N)
 Evaluaciones.hasMany(Comentarios, {
+    foreignKey: 'EvaluacioneId',
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
 })
 
 Comentarios.belongsTo(Evaluaciones, {
+    foreignKey: 'EvaluacioneId',
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
 })
+
+// Relaciones directas para Evaluaciones
+Evaluaciones.belongsTo(Tesis, { foreignKey: 'tesisId', as: 'tesis' });
+Evaluaciones.belongsTo(Tribunales, { foreignKey: 'tribunalId', as: 'tribunal' });
+
+// Relaciones inversas para Evaluaciones
+Tesis.hasMany(Evaluaciones, { foreignKey: 'tesisId', as: 'evaluaciones' });
+Tribunales.hasMany(Evaluaciones, { foreignKey: 'tribunalId', as: 'evaluaciones' });
+
 
 //Docente-CargaDocente(1-N)
 Docentes.hasMany(CargaDocente,{

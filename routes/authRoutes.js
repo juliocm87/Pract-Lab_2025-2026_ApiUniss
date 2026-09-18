@@ -60,7 +60,7 @@ router.post("/auth/login", async (req, res, next) => {
     const { nombre_usuario, contrasena } = req.body;
 
     if (!nombre_usuario || !contrasena) {
-      throw new AppError("nombre_usuario and password are required", 400);
+      throw new AppError("nombre_usuario y contraseña son requeridas", 400);
     }
 
     const { accessToken, refreshToken } = await login(nombre_usuario, contrasena);

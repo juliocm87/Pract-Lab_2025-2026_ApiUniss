@@ -6,6 +6,7 @@ const {
     getAllTesis,
     deleteTesis,
     getTesis,
+    getTesisPorProfesor
 } = require("../controller/tesisController");
 const AppError = require("../error/AppError");
 const authenticate = require("../middlewares/authenticate");
@@ -110,11 +111,11 @@ router.post(
             if (!tema || !descripcion || !docenteCI || !estudianteCi ) {
                 throw new AppError("Todos los campos son requeridos", 400);
             }
-            const tesis = await createEvaluacion(jefeId, {
-                tema: tema,
-                descripcion: descripcion,
-                docenteCI: docenteCI,
-                estudianteCi: estudianteCi
+            const tesis = await createTesis({
+                tema,
+                descripcion,
+                docenteCI,
+                estudianteCi
             });
             res.status(201).json(tesis);
         } catch (error) {
@@ -305,17 +306,32 @@ router.delete(
  *         description: Error de servidor
  */
 router.get(
-    "/tesis/:limit/:offset",
+    "/tesis/:limit/:offset/:searchTerm",
     authenticate(["docente"]),
     async (req, res, next) => {
         try {
             const limit = parseInt(req.params.limit) || 10;
             const offset = parseInt(req.params.offset) || 0;
-            const tesis = await getTesis(offset, limit);
+            const searchTerm = req.params.searchTerm || ""
+            const tesis = await getTesis(offset, limit, searchTerm);
             res.status(200).json({
                 rows: tesis.rows,
                 count: tesis.count
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+router.get(
+    "/tesis/:profesorId",
+    authenticate(["docente"]),
+    async (req, res, next) => {
+        try {
+            const profesorId = req.params.profesorId
+            const tesis = await getTesisPorProfesor(profesorId);
+            res.status(200).json(tesis);
         } catch (error) {
             next(error);
         }

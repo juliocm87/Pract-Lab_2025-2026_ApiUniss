@@ -6,6 +6,7 @@ const {
     getAllEvaluacion,
     deleteEvaluacion,
     getEvaluacion,
+    getEvaluacionesPorTesis
 } = require("../controller/evaluacionController");
 const AppError = require("../error/AppError");
 const authenticate = require("../middlewares/authenticate");
@@ -105,17 +106,15 @@ router.post(
             const { 
                 tesisId,
                 tribunalId,
-                taller,
-                nota
+                taller
             } = req.body;
-            if (!tesisId || !tribunalId || !taller || !nota ) {
+            if (!tesisId || !tribunalId || !taller ) {
                 throw new AppError("Todos los campos son requeridos", 400);
             }
             const evaluacion = await createEvaluacion(jefeId, {
                 tesisId: tesisId,
                 tribunalId: tribunalId,
-                taller: taller,
-                nota: nota
+                taller: taller
             });
             res.status(201).json(evaluacion);
         } catch (error) {
@@ -297,13 +296,14 @@ router.delete(
  *         description: Error de servidor
  */
 router.get(
-    "/comentarios/:limit/:offset",
+    "/comentarios/:limit/:offset/:searchTerm",
     authenticate(["docente"]),
     async (req, res, next) => {
         try {
             const limit = parseInt(req.params.limit) || 10;
             const offset = parseInt(req.params.offset) || 0;
-            const evaluaciones = await getEvaluacion(offset, limit);
+            const searchTerm = req.params.searchTerm || ""
+            const evaluaciones = await getEvaluacion(offset, limit, searchTerm);
             res.status(200).json({
                 rows: evaluaciones.rows,
                 count: evaluaciones.count
@@ -313,5 +313,20 @@ router.get(
         }
     }
 );
+
+router.get(
+    "/comentarios/:tesisId/:jefeId",
+    authenticate(["docente"]),
+    async (req, res, next) => {
+        try {
+            const tesisId = req.params.tesisId;
+            const jefeId = req.params.jefeId;
+            const evaluaciones = await getEvaluacionesPorTesis(tesisId, jefeId);
+            res.status(200).json(evaluaciones);
+        } catch (error) {
+            next(error);
+        }
+    }
+)
 
 module.exports = router; 

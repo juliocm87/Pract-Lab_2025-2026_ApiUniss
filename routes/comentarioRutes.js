@@ -6,6 +6,7 @@ const {
     getAllComentarios,
     deleteComentario,
     getComentario,
+    getComentariosPorEvaluacion
 } = require("../controller/comentarioControler");
 const AppError = require("../error/AppError");
 const authenticate = require("../middlewares/authenticate");
@@ -185,18 +186,18 @@ router.put(
   authenticate(["docente"]),
   async (req, res, next) => {
     try {
-      const { contenido } = req.body;
+      const { contenido, docenteId } = req.body;
       const { comentarioId } = req.params;
 
       if (!comentarioId) {
         throw new AppError("El id del comentario es requerido", 400);
       }
 
-      if (!contenido ) {
-        throw new AppError("El contenido del comentario es requirido", 400);
+      if (!contenido || docenteId ) {
+        throw new AppError("Todos los campos son requirido", 400);
       }
 
-      const comentario = await updateComentario(comentarioId, contenido);
+      const comentario = await updateComentario(comentarioId, docenteId, contenido);
       if (comentario == 0) {
         throw new AppError("Comentario no encontrado", 404);
       }
@@ -241,18 +242,18 @@ router.put(
  *         description: Error de servidor
  */
 router.delete(
-  "/comentarios/delete/:comentarioId",
+  "/comentarios/delete/:comentarioId/:docenteId",
   authenticate(["docente"]),
   async (req, res, next) => {
     try {
-      const { comentarioId } = req.params;
+      const { comentarioId, docenteId } = req.params;
 
-      if (!comentarioId) {
-        throw new AppError("El id del comentario es requerido", 400);
+      if (!comentarioId || docenteId) {
+        throw new AppError("El id del comentario y el docente son requeridos", 400);
       }
 
-      const comentario = await deleteComentario(comentarioId);
-      if (comentario == 0) {
+      const comentario = await deleteComentario(docenteId, comentarioId);
+      if (comentario != true) {
         throw new AppError("Comentario no encontrado", 404);
       }
 
@@ -317,5 +318,19 @@ router.get(
     }
   }
 );
+
+router.get(
+  "/comentarios/:evaluacionId",
+  authenticate(["docente"]),
+  async (req, res, next) =>{
+    try {
+      const {evaluacionId} = req.params;
+      const comentarios = await getComentariosPorEvaluacion(evaluacionId);
+      res.status(200).json(comentarios);
+    } catch (error) {
+      next(error);
+    }
+  }
+)
 
 module.exports = router; 
