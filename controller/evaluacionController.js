@@ -6,6 +6,34 @@ const Comentarios = require("../models/comentarios");
 const Tribunales = require("../models/tribunales");
 const Tesis = require("../models/tesis");
 
+const getEvaluacionesPorTesis = async (tesisId, jefeId) => {
+    try {
+
+        const evaluaciones = await Evaluaciones.findAll({
+            where: { tesisId },
+            include: [
+                {
+                    model: Tribunales,
+                    as: 'tribunal',
+                    where: { jefe: jefeId },
+                    required: true,
+                    attributes: ["jefe", "secretario", "vocal", "tutor", "oponente"]
+                },
+                {
+                    model: Tesis,
+                    as: 'tesis',
+                    attributes: ["tema", "descripcion", "docenteCI"]
+                }
+            ],
+            attributes: ["id", "taller", "nota"]
+        });
+
+        return evaluaciones;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getEvaluacion = async (offset = 0, limit = 10, searchTerm = '') => {
     try {
         const whereClause = {};
@@ -77,6 +105,7 @@ const getAllEvaluacion = async () => {
                 },
                 {
                     model: Tesis,
+                    as: 'tesis',
                     attributes: ["tema", "descripcion", "docenteCI"],
                 }
             ]
@@ -93,8 +122,27 @@ const createEvaluacion = async (jefeId, datos) => {
             tesisId,
             tribunalId,
             taller,
-            nota
         } = datos
+
+        const tesis = await Tesis.findByPk(tesisId);
+        if (!tesis) {
+            throw new AppError("La tesis no existe", 404);
+        }
+
+        // Verificar que el tribunal exista
+        const tribunal = await Tribunales.findByPk(tribunalId);
+        if (!tribunal) {
+            throw new AppError("El tribunal no existe", 404);
+        }
+
+        // Verificar que no haya una evaluación duplicada para esta tesis y taller
+        const existeEvaluacion = await Evaluaciones.findOne({
+            where: { tesisId, taller }
+        });
+        if (existeEvaluacion) {
+            throw new AppError(`Ya existe una evaluación para esta tesis en el taller "${taller}"`, 400);
+        }
+
         const tribunal = await Tribunales.findByPk(tribunalId)
         if (jefeId !== tribunal.jefe){
             throw new AppError("Solo el jefe del tribunal puede dar una evaluación "+ error.message, 401)
@@ -103,7 +151,7 @@ const createEvaluacion = async (jefeId, datos) => {
             tesisId: tesisId,
             tribunalId: tribunalId,
             taller: taller,
-            nota: nota
+            nota: null
         });
         return evaluacion;
     } catch (error) {
@@ -116,7 +164,12 @@ const updateEvaluacion = async (id, jefeId, nota) => {
         const buscarEvaluacion = await Evaluaciones.findByPk(id, {
             include: [
                 {
-                    model: Tribunales
+                    model: Tribunales,
+                    as: 'tribunal'
+                },
+                {
+                    model: Tesis,
+                    as: 'tesis'
                 }
             ]
         })
@@ -145,4 +198,4 @@ const deleteEvaluacion = async (id) => {
     }
 };
 
-module.exports = { createEvaluacion, updateEvaluacion, getAllEvaluacion, deleteEvaluacion, getEvaluacion };
+module.exports = { createEvaluacion, updateEvaluacion, getAllEvaluacion, deleteEvaluacion, getEvaluacion, getEvaluacionesPorTesis };

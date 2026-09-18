@@ -1,5 +1,6 @@
 const AppError = require("../error/AppError");
 const Tesis = require("../models/tesis");
+const Trabajadores = require("../models/trabajadores")
 const Docente = require("../models/docentes");
 const { Op } = require("sequelize");
 const Estudiantes = require("../models/estudiantes")
@@ -10,9 +11,14 @@ const getTesis = async (offset = 0, limit = 10, searchTerm = '') => {
         const includeClause = [
         {
             model: Docente,
-            attributes: ["trabajadorId", "nombre_usuario"],
+            attributes: ["trabajadorId"],
             required: false,
-            as: 'tutor'
+            as: 'docente',
+            include: [{
+                model: Trabajadores,
+                as: 'Trabajador',
+                attributes: ["nombre_usuario"]
+            }]
         },
         {
             model: Estudiantes,
@@ -56,9 +62,14 @@ const getAllTesis = async () => {
             include: [
                 {
                     model: Docente,
-                    attributes: ["trabajadorId", "nombre_usuario"],
+                    attributes: ["trabajadorId"],
                     required: false,
-                    as: 'tutor'
+                    as: 'docente',
+                    include: [{
+                        model: Trabajadores,
+                        as: 'Trabajador',
+                        attributes: ["nombre_usuario"]
+                    }]
                 },
                 {
                     model: Estudiantes,
@@ -136,4 +147,92 @@ const deleteTesis = async (id) => {
     }
 };
 
-module.exports = { createTesis, updateTesis, getAllTesis, deleteTesis, getTesis, cambiarEstado };
+const getTesisPorProfesor = async (profesorId) => {
+    try {
+        const tesisTutor = await Tesis.findAll({
+            where: { docenteCI: profesorId },
+            include: [
+                {
+                    model: Docente,
+                    attributes: ["trabajadorId"],
+                    required: false,
+                    as: 'docente',
+                    include: [{
+                        model: Trabajadores,
+                        as: 'Trabajador',
+                        attributes: ["nombre_usuario"]
+                    }]
+                },
+                {
+                    model: Estudiantes,
+                    attributes: ["ci", "nombre", "apellido"],
+                }
+            ],
+            attributes: ["id", "tema", "estado"],
+            order: [['createdAt', 'DESC']]
+        });
+        const tesisMiembro = await Tesis.findAll({
+            include: [
+                {
+                    model: Docente,
+                    attributes: ["trabajadorId"],
+                    required: false,
+                    as: 'docente',
+                    include: [{
+                        model: Trabajadores,
+                        as: 'Trabajador',
+                        attributes: ["nombre_usuario"]
+                    }]
+                },
+                {
+                    model: Estudiantes,
+                    attributes: ["ci", "nombre", "apellido"],
+                },
+                {
+                    model: Evaluaciones,
+                    as: 'evaluaciones',
+                    required: true,
+                    include: [
+                        {
+                            model: Tribunales,
+                            as: 'tribunal',
+                            required: true,
+                            where: {
+                                [Op.or]: [
+                                    { jefe: profesorId },
+                                    { secretario: profesorId },
+                                    { vocal: profesorId },
+                                    { tutor: profesorId },
+                                    { oponente: profesorId }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ],
+            attributes: ["id", "tema", "estado"],
+            order: [['createdAt', 'DESC']]
+        });
+        const idsSet = new Set();
+        const resultado = [];
+
+        tesisTutor.forEach(t => {
+            if (!idsSet.has(t.id)) {
+                idsSet.add(t.id);
+                resultado.push(t);
+            }
+        });
+
+        tesisMiembro.forEach(t => {
+            if (!idsSet.has(t.id)) {
+                idsSet.add(t.id);
+                resultado.push(t);
+            }
+        });
+        return resultado;
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = { createTesis, updateTesis, getAllTesis, deleteTesis, getTesis, cambiarEstado, getTesisPorProfesor };

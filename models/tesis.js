@@ -27,6 +27,10 @@ const Tesis = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+    estudianteCi: {
+        type: DataTypes.STRING,
+        allowNull: true
+    }
     },
     {
         timestamps: true,

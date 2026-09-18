@@ -5,6 +5,34 @@ const { Op } = require("sequelize");
 const Evaluaciones = require("../models/evaluaciones");
 const Trabajadores = require("../models/trabajadores");
 
+const getComentariosPorEvaluacion = async (evaluacionId) => {
+    try {
+        const comentarios = await Comentarios.findAll({
+            where: { EvaluacioneId: evaluacionId },
+            attributes: ["id", "docenteId", "EvaluacioneId", "contenido", "createdAt", "updatedAt"],
+            include: [
+                {
+                    model: Docentes,
+                    attributes: ["trabajadorId"],
+                    include: [
+                        {
+                            model: Trabajadores,
+                            as: 'Trabajador',
+                            attributes: ["nombre", "apellido", "rol"]
+                        }
+                    ],
+                    required: false
+                }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+        return comentarios;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
 const getComentario = async (offset = 0, limit = 10, searchTerm = '') => {
     try {
         const whereClause = {};
@@ -15,21 +43,18 @@ const getComentario = async (offset = 0, limit = 10, searchTerm = '') => {
             include: [
                 {
                     model: Trabajadores,
+                    as: 'Trabajador',
                     attributes: ["nombre", "apellido", "rol"]
                 }
             ],
             require: false,
-            as: 'responsable'
         },
             {
             model: Evaluaciones,
             attributes: ["tesisId", "tribunalId", "taller"],
             required: false,
-            as: 'evaluación'
         }
     ];
-
-    // Si hay un término de búsqueda, agregar condiciones de búsqueda
     if (searchTerm && searchTerm.trim() !== '') {
         whereClause[Op.or] = [
             {
@@ -46,11 +71,12 @@ const getComentario = async (offset = 0, limit = 10, searchTerm = '') => {
     }
 
         const comentarios = await Comentarios.findAndCountAll({
-        attributes: ["id", "docenteId", "evaluacionId"],
+        attributes: ["id", "docenteId", "evaluacionId", "contenido"],
         include: includeClause,
         where: whereClause,
         offset,
-        limit
+        limit,
+        order: [['createdAt', 'DESC']]
         });
         return comentarios;
     } catch (error) {
@@ -69,19 +95,19 @@ const getAllComentarios = async () => {
                     include: [
                         {
                             model: Trabajadores,
+                            as: 'Trabajador',
                             attributes: ["nombre", "apellido", "rol"]
                         }
                     ],
                     require: false,
-                    as: 'responsable'
                 },
                 {
                     model: Evaluaciones,
                     attributes: ["tesisId", "tribunalId", "taller"],
                     required: false,
-                    as: 'evaluación'
                 }
-            ]
+            ],
+            order: [['createdAt', 'DESC']]
         });
     return comentarios;
     } catch (error) {
@@ -96,6 +122,23 @@ const createComentario = async (datos) => {
             evaluacionId,
             contenido
         } = datos
+        const evaluacion = await Evaluaciones.findByPk(EvaluacioneId, {
+            include: [{ model: Tribunales, as: 'tribunal' }]
+        });
+        if (!evaluacion) {
+            throw new AppError("La evaluación no existe", 404);
+        }
+        const esMiembro = (
+            evaluacion.tribunal.jefe === docenteId ||
+            evaluacion.tribunal.secretario === docenteId ||
+            evaluacion.tribunal.vocal === docenteId ||
+            evaluacion.tribunal.tutor === docenteId ||
+            evaluacion.tribunal.oponente === docenteId
+        );
+        if (!esMiembro) {
+            throw new AppError("No tienes permiso para comentar en esta evaluación", 403);
+        }
+
         const comentario = await Comentarios.create({ 
             docenteId: docenteId,
             evaluacionId: evaluacionId,
@@ -107,11 +150,17 @@ const createComentario = async (datos) => {
     }
 };
 
-const updateComentario = async (id, contenido) => {
+const updateComentario = async (comentarioId, docenteId, contenido) => {
     try {
-        const comentario = await Comentarios.update(
+        const comentario = await Comentarios.findByPk(comentarioId);
+        if (!comentario) {
+            throw new AppError("Comentario no encontrado", 404);
+        }
+        if (comentario.docenteId !== docenteId) {
+            throw new AppError("Solo el autor puede editar este comentario", 403);
+        }
+        await comentario.update(
             { contenido},
-            { where: { id } }
         );
         return comentario;
     } catch (error) {
@@ -119,13 +168,20 @@ const updateComentario = async (id, contenido) => {
     }
 };
 
-const deleteComentario = async (id) => {
+const deleteComentario = async (docenteId, comentarioId) => {
     try {
-        const comentario = await Comentarios.destroy({ where: { id } });
-        return comentario;
+        const comentario = await Comentarios.findByPk(comentarioId);
+        if (!comentario) {
+            throw new AppError("Comentario no encontrado", 404);
+        }
+        if (comentario.docenteId !== docenteId) {
+            throw new AppError("Solo el autor puede eliminar este comentario", 403);
+        }
+        await comentario.destroy();
+        return true;
     } catch (error) {
         throw error;
     }
 };
 
-module.exports = { createComentario, updateComentario, getComentario, deleteComentario, getAllComentarios};
+module.exports = { createComentario, updateComentario, getComentario, deleteComentario, getAllComentarios, getComentariosPorEvaluacion};

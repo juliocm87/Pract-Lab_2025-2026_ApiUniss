@@ -186,8 +186,6 @@ const login = async (nombre_usuario, contrasena) => {
     
     });
 
-   
-
     if (!trabajador) {
       throw new AppError("Usuario no encontrado en el sistema", 401);
     }
@@ -197,7 +195,7 @@ const login = async (nombre_usuario, contrasena) => {
     }
 
     // Autenticar contraseña con LDAP
-   //  await authenticateLDAP(nombre_usuario, contrasena);
+    //await authenticateLDAP(nombre_usuario, contrasena);
     
     // Usar el rol del trabajador desde la base de datos
     const role = trabajador.rol || 'usuario';
@@ -321,7 +319,6 @@ const getSession = async (ci) => {
   console.log('Obteniendo datos de sesión del trabajador');
   try {
     // El middleware de autenticación ya ha verificado el token y agregado los datos a req.user
-   
 
     // Obtener datos completos del trabajador desde la base de datos
     const trabajador = await Trabajadores.findByPk(ci);

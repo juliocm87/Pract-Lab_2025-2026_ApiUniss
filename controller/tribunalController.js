@@ -13,7 +13,8 @@ const getTribunal = async (offset = 0, limit = 10, searchTerm = '') => {
             include: [
                 {
                     model: Trabajadores,
-                    attributes: ["ci", "nombre", "apellido", "rol"]
+                    as: 'Trabajador',
+                    attributes: ["ci", "nombre", "apellido"]
                 }
             ],
             required: false,
@@ -55,13 +56,63 @@ const getAllTribunales = async () => {
             include: [
                 {
                     model: Docente,
+                    as: 'jefeDocente',
                     include: [
                         {
                             model: Trabajadores,
-                            attributes: ["ci", "nombre", "apellido", "rol"]
+                            as: 'Trabajador',
+                            attributes: ["ci", "nombre", "apellido"]
                         }
                     ],
                 required: false,
+                },
+                {
+                    model: Docentes,
+                    as: 'secretarioDocente',
+                    include: [
+                        {
+                            model: Trabajadores,
+                            as: 'Trabajador', 
+                            attributes: ["ci", "nombre", "apellido"]
+                        }
+                    ],
+                    required: false
+                },
+                {
+                    model: Docentes,
+                    as: 'vocalDocente',
+                    include: [
+                        {
+                            model: Trabajadores,
+                            as: 'Trabajador', 
+                            attributes: ["ci", "nombre", "apellido"]
+                        }
+                    ],
+                    required: false
+                },
+                {
+                    model: Docentes,
+                    as: 'tutorDocente',
+                    include: [
+                        {
+                            model: Trabajadores,
+                            as: 'Trabajador',
+                            attributes: ["ci", "nombre", "apellido"]
+                        }
+                    ],
+                    required: false
+                },
+                {
+                    model: Docentes,
+                    as: 'oponenteDocente',
+                    include: [
+                        {
+                            model: Trabajadores,
+                            as: 'Trabajador',
+                            attributes: ["ci", "nombre", "apellido"]
+                        }
+                    ],
+                    required: false
                 }
             ]
         });

@@ -58,7 +58,6 @@ class SigenuService {
       
       let careerName = studentData.docentData.career;
       const foundCareer = careers.find(c => {
-         
           return c.idCarrera.toString() === studentData.docentData.career.toString() 
           }
       );
