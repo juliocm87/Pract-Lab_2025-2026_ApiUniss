@@ -3,7 +3,7 @@ const AsignaturaCarreras = require("./asignaturaCarreras");
 const Asignaturas = require("./asignaturas");
 const Becas = require("./becas");
 const CargaDocente = require("./cargaDocente");
-const CargoDocenteActividad = require("./cargaDocenteActividad")
+const CargaDocenteActividad = require("./cargaDocenteActividad")
 const Carreras = require("./carreras");
 const Comentarios = require("./comentarios")
 const Cuartos = require("./cuartos");
@@ -13,6 +13,7 @@ const Estudiantes = require("./estudiantes");
 const Evaluaciones = require("./evaluaciones")
 const Horarios = require("./horarios");
 const Incidencias = require("./incidencias");
+const Modalidades = require("./modalidad");
 const Pisos = require("./pisos");
 const Planes = require("./planes");
 const Talleres = require("./talleres");
@@ -402,6 +403,14 @@ CargaDocente.belongsTo(Docentes, {
     onUpdate: "CASCADE",
 })
 
+//Actividades-Modalidad(1-n)
+Modalidades.hasMany(Actividades, {
+    foreignKey: 'modalidad'
+});
+Actividades.belongsTo(Modalidades, {
+    foreignKey: 'modalidad'
+})
+
 //CargaDocente-Actividad(N-M)
 CargaDocente.belongsToMany(Actividades, {
     through: 'cargaDocenteActividad',
@@ -417,7 +426,7 @@ module.exports = [
     Asignaturas, 
     Becas,
     CargaDocente,
-    CargoDocenteActividad,
+    CargaDocenteActividad,
     Carreras,
     Comentarios,
     Cuartos,
@@ -427,6 +436,7 @@ module.exports = [
     Evaluaciones,
     Horarios,
     Incidencias,
+    Modalidades,
     Pisos,
     Planes,
     Talleres,

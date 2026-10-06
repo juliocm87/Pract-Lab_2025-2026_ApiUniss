@@ -132,3 +132,8 @@ uploads
 
 # Docker y Base de datos
 postgres_data/
+
+#futuras tablas
+models/trabajadorRol.js
+controller/trabajadorRolController.js
+routes/trabajadorRolRoutes.js

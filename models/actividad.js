@@ -19,6 +19,14 @@ const Actividades = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
             unique: true,
+        },
+        modalidad: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'modalidades',
+                key: 'id'
+            },
         }
     },
     {
