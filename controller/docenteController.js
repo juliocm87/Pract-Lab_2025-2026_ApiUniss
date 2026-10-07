@@ -115,6 +115,20 @@ const getDocentesByFacultad = async (facultadId) => {
   }
 };
 
+const cambiarFotoPerfil = async (ci, filename) => {
+  try {
+    const docente = await Docentes.findOne({ where: { trabajadorId: ci } });
+
+    if (!docente) {
+      throw new AppError("Docente no encontrado", 404);
+    }
+    await docente.update({ fotoPerfil: filename });
+    return {fotoPerfil: filename};
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   getDocenteByCI,
   getAsignaturasByDocenteCI,

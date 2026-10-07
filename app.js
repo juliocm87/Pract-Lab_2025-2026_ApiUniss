@@ -2,6 +2,7 @@ const sequelize = require("./helpers/database.js");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -101,6 +102,7 @@ app.use(
 //Middleware de la aplicacion
 
 app.use(requestLogger);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //uso de las rutas
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
