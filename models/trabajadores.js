@@ -66,6 +66,11 @@ const determinarSexo = (ci) => {
 const Trabajadores = sequelize.define(
   "trabajadores",
   {
+    foto_perfil: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "default"
+    },
     ci: {
       type: DataTypes.STRING,
       primaryKey: true,

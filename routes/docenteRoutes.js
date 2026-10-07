@@ -8,6 +8,7 @@ const {
 } = require("../controller/docenteController");
 const AppError = require("../error/AppError");
 const authenticate = require("../middlewares/authenticate");
+const { uploadUserPhoto, resizeUserPhoto } = require("../middlewares/uploadProfile");
 
 /**
  * @swagger
@@ -207,6 +208,55 @@ router.get(
       next(error);
     }
   }
+);
+
+/**
+ * @swagger
+ * /usuario/{id}/foto:
+ *   patch:
+ *     summary: Subir o actualizar foto de perfil
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               foto:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen a subir (jpg, png, etc.)
+ *     responses:
+ *       200:
+ *         description: Foto subida exitosamente
+ */
+router.patch(
+    "/usuario/:id/foto",
+    authenticate(["docente"]),
+    uploadUserPhoto,
+    resizeUserPhoto,
+    async (req, res, next) => {
+        try {
+            if (!req.file) {
+                throw new AppError("Debe proporcionar una imagen", 400);
+            }
+            
+            const result = await uploadFotoPerfil(req.params.id, req.file.filename);
+            res.status(200).json({
+                message: "Foto actualizada correctamente",
+                foto_perfil: result.foto_perfil
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 );
 
 module.exports = router;
