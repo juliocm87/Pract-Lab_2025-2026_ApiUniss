@@ -13,15 +13,15 @@ const sequelize = require("../helpers/database");
  *           description: El ID del curso (año académico).
  *         nombre_curso:
  *           type: string
- *           description: El nombre del curso (ej: "2025-2026").
+ *           description: El nombre del curso (ej "2025-2026").
  *         fecha_inicio:
  *           type: string
  *           format: date
- *           description: Fecha de inicio del curso (ej: septiembre 2025).
+ *           description: Fecha de inicio del curso (ej septiembre 2025).
  *         fecha_fin:
  *           type: string
  *           format: date
- *           description: Fecha de fin del curso (ej: julio 2026).
+ *           description: Fecha de fin del curso (ej julio 2026).
  *         estado:
  *           type: string
  *           description: Estado del curso (activo, inactivo, finalizado).
@@ -49,31 +49,31 @@ const sequelize = require("../helpers/database");
  */
 
 const Cursos = sequelize.define(
-    "cursos",
-    {
-        nombre_curso: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        fecha_inicio: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        fecha_fin: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        estado: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: 'activo',
-        }
+  "cursos",
+  {
+    nombre_curso: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
-    {
-        timestamps: true,
-        paranoid: true,
-    }
+    fecha_inicio: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    fecha_fin: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    estado: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "activo",
+    },
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+  },
 );
 
 module.exports = Cursos;

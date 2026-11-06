@@ -143,7 +143,6 @@ const createEvaluacion = async (jefeId, datos) => {
             throw new AppError(`Ya existe una evaluación para esta tesis en el taller "${taller}"`, 400);
         }
 
-        const tribunal = await Tribunales.findByPk(tribunalId)
         if (jefeId !== tribunal.jefe){
             throw new AppError("Solo el jefe del tribunal puede dar una evaluación "+ error.message, 401)
         }
